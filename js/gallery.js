@@ -62,12 +62,43 @@ const images = [
         "https://cdn.pixabay.com/photo/2019/05/17/04/35/lighthouse-4208843_1280.jpg",
       description: "Lighthouse Coast Sea",
     },
-  ];
+];
+//масив зображень..
+const galleryContainer = document.querySelector('.gallery');
 
-  import * as basicLightbox from 'basiclightbox'
+function createGalleryItem({ preview, original, description }) {
+    return `
+        <li class="gallery-item">
+            <a class="gallery-link" href="${original}">
+                <img class="gallery-image" src="${preview}" data-source="${original}" alt="${description}" />
+            </a>
+        </li>
+    `;
+}
 
-const instance = basicLightbox.create(`
-    <img src="assets/images/image.png" width="800" height="600">
-`)
+const galleryMarkup = images.map(createGalleryItem).join('');
+galleryContainer.insertAdjacentHTML('beforeend', galleryMarkup);
+//модальне вікно..
+galleryContainer.addEventListener('click', handleGalleryClick);
+function handleGalleryClick(event) {
+    event.preventDefault();
+    const isImage = event.target.classList.contains('gallery-image');
+    if (isImage) {
+        const largeImageUrl = event.target.dataset.source;
+        openModal(largeImageUrl);
+    }
+}
 
-instance.show()
+function openModal(url) {
+    const instance = basicLightbox.create(`<img src="${url}" width="800" height="600">`);
+    instance.show();
+    document.addEventListener('keydown', handleEscape);
+}
+
+function handleEscape(event) {
+    if (event.key === 'Escape') {
+        basicLightbox.close();
+        document.removeEventListener('keydown', handleEscape);
+    }
+}
+
