@@ -63,42 +63,48 @@ const images = [
       description: "Lighthouse Coast Sea",
     },
 ];
-//масив зображень..
+
+
 const galleryContainer = document.querySelector('.gallery');
 
 function createGalleryItem({ preview, original, description }) {
-    return `
-        <li class="gallery-item">
-            <a class="gallery-link" href="${original}">
-                <img class="gallery-image" src="${preview}" data-source="${original}" alt="${description}" />
-            </a>
-        </li>
-    `;
+  return `
+    <li class="gallery-item">
+        <a class="gallery-link" href="${original}">
+            <img class="gallery-image" src="${preview}" data-source="${original}" alt="${description}" />
+        </a>
+    </li>
+  `;
 }
 
 const galleryMarkup = images.map(createGalleryItem).join('');
 galleryContainer.insertAdjacentHTML('beforeend', galleryMarkup);
-//модальне вікно..
+
 galleryContainer.addEventListener('click', handleGalleryClick);
+
 function handleGalleryClick(event) {
-    event.preventDefault();
-    const isImage = event.target.classList.contains('gallery-image');
-    if (isImage) {
-        const largeImageUrl = event.target.dataset.source;
-        openModal(largeImageUrl);
-    }
+  event.preventDefault();
+  const isImage = event.target.classList.contains('gallery-image');
+  if (isImage) {
+    const largeImageUrl = event.target.dataset.source;
+    openModal(largeImageUrl);
+  }
 }
 
 function openModal(url) {
-    const instance = basicLightbox.create(`<img src="${url}" width="800" height="600">`);
-    instance.show();
-    document.addEventListener('keydown', handleEscape);
+  const instance = basicLightbox.create(`<img src="${url}" width="800" height="600">`, {
+    onShow: () => {
+      document.addEventListener('keydown', handleEscape);
+    },
+    onClose: () => {
+      document.removeEventListener('keydown', handleEscape);
+    },
+  });
+  instance.show();
 }
 
 function handleEscape(event) {
-    if (event.key === 'Escape') {
-        basicLightbox.close();
-        document.removeEventListener('keydown', handleEscape);
-    }
+  if (event.key === 'Escape') {
+    basicLightbox.close();
+  }
 }
-
