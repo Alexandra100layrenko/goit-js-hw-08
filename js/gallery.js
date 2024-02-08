@@ -78,7 +78,8 @@ function createGalleryItem({ preview, original, description }) {
 }
 
 const galleryMarkup = images.map(createGalleryItem).join('');
-galleryContainer.insertAdjacentHTML('beforeend', galleryMarkup);
+galleryContainer.innerHTML = galleryMarkup;
+//galleryContainer.insertAdjacentHTML('beforeend', galleryMarkup);
 
 galleryContainer.addEventListener('click', handleGalleryClick);
 
@@ -92,7 +93,7 @@ function handleGalleryClick(event) {
 }
 
 function openModal(url) {
-  const instance = basicLightbox.create(`<img src="${url}" width="800" height="600">`, {
+  const instance = basicLightbox.create(`<img src="${url}" width="800" height="600" tabindex="0">`, {
     onShow: () => {
       document.addEventListener('keydown', handleEscape);
     },
@@ -105,6 +106,9 @@ function openModal(url) {
 
 function handleEscape(event) {
   if (event.key === 'Escape') {
-    basicLightbox.close();
+    const instance = basicLightbox.get();
+    if (instance) {
+      instance.close();
+    }
   }
 }
